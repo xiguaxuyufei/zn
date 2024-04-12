@@ -1,58 +1,58 @@
 package com.example.myapplication
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.CalendarView
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var logAdapter: LogAdapter
+    private lateinit var logRecyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val Button1 = findViewById<Button>(R.id.button1)
-        val Button2 = findViewById<Button>(R.id.button2)
-        val Button3 = findViewById<Button>(R.id.button3)
-        val Button4 = findViewById<Button>(R.id.button4)
-        var isSelected = false // 用来跟踪按钮是否被选中
 
-        Button1.setOnClickListener {
-            isSelected = !isSelected; // 切换选中状态
-            if (isSelected) {
-                Button1.setBackgroundResource(R.color.red);
-                // 设置其他选中状态的属性（如果需要）
-            } else {
-                Button1.setBackgroundResource(R.color.grey);
-                // 设置其他未选中状态的属性（如果需要）
-            }
+        logRecyclerView = findViewById(R.id.log_list)
+        logAdapter = LogAdapter()
+        logRecyclerView.layoutManager = LinearLayoutManager(this)
+        logRecyclerView.adapter = logAdapter
+
+        // 假设这里有一个添加日志的方法
+        addLog("这是一条日志内容")
+
+        val addButton = findViewById<Button>(R.id.add_button)
+        addButton.setOnClickListener {
+            showAddDialog()
         }
-        Button2.setOnClickListener {
-            isSelected = !isSelected; // 切换选中状态
-            if (isSelected) {
-                Button2.setBackgroundResource(R.color.red);
-                // 设置其他选中状态的属性（如果需要）
-            } else {
-                Button2.setBackgroundResource(R.color.grey);
-                // 设置其他未选中状态的属性（如果需要）
-            }
+    }
+
+    private fun showAddDialog() {
+        // 这里将实现自定义对话框的代码
+        val dialog = AlertDialog.Builder(this)
+        val inflater = getLayoutInflater()
+        val dialogView = inflater.inflate(R.layout.dialog_add_log, null)
+
+        val calendarView = dialogView.findViewById<CalendarView>(R.id.calendar_view)
+        val editText = dialogView.findViewById<EditText>(R.id.log_text)
+
+        dialog.setView(dialogView)
+        dialog.setPositiveButton("保存") { _, _ ->
+            // 这里处理保存逻辑，比如获取日历选择的日期和文本编辑框的内容
         }
-        Button3.setOnClickListener {
-            isSelected = !isSelected; // 切换选中状态
-            if (isSelected) {
-                Button3.setBackgroundResource(R.color.red);
-                // 设置其他选中状态的属性（如果需要）
-            } else {
-                Button3.setBackgroundResource(R.color.grey);
-                // 设置其他未选中状态的属性（如果需要）
-            }
+        dialog.setNegativeButton("取消") { dialog, _ ->
+            dialog.cancel()
         }
-        Button4.setOnClickListener {
-            isSelected = !isSelected; // 切换选中状态
-            if (isSelected) {
-                Button4.setBackgroundResource(R.color.red);
-                // 设置其他选中状态的属性（如果需要）
-            } else {
-                Button4.setBackgroundResource(R.color.grey);
-                // 设置其他未选中状态的属性（如果需要）
-            }
-        }
-}
+        dialog.show()
+    }
+
+    private fun addLog(content: String) {
+        val timestamp = System.currentTimeMillis() // 获取当前时间戳
+        val logEntry = LogEntry(timestamp, content)
+        logAdapter.addLog(logEntry)
+    }
 }
